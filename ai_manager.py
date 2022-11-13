@@ -34,7 +34,7 @@ class AI_Manager():
         from cv2 import CascadeClassifier
         self.detector1 = CascadeClassifier("vision_AI/haarcascade_frontalface_default.xml")
         # Face detector 2 (mtcnn)
-        from mtcnn.mtcnn import MTCNN
+        from mtcnn_tflite.MTCNN import MTCNN
         self.detector2 = MTCNN()
 
         # Classifier
