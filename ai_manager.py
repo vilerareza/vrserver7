@@ -3,7 +3,8 @@ import datetime
 import base64
 import pickle
 
-from tensorflow.keras import models
+#from tensorflow.keras import models
+from tflite_runtime.interpreter import Interpreter
 import numpy as np
 #from openvino.inference_engine import IECore
 
@@ -40,33 +41,14 @@ class AI_Manager():
         if recognition:
             self.modelLocation = model_location
             if model_location != '':
-                if ie:
-                    pass
-                    # Use intel inference engine
-                    # self.classifier = self.create_inference_engine(self.modelLocation)
-                else:
-                    # Use regular tf / keras model
-                    self.classifier = models.load_model(self.modelLocation)
+                # Use regular tf / keras model
+                #self.classifier = models.load_model(self.modelLocation)
+                self.classifier = Interpreter(model_path = self.modelLocation)
             else:
                 print ('Model location is not set')
     
         # Classes
         self.classPrimaryKeys, self.classVectors = self.get_class_objects(model = FaceObject)
-
-    # def create_inference_engine(self, model_location):
-    #     ie = IECore()
-    #     net  = ie.read_network(model = model_location)
-    #     input_name = next(iter(net.input_info))
-    #     output_name = next(iter(net.outputs))
-    #     self.ieModelProperties = input_name, output_name
-    #     try:
-    #         model = ie.load_network(network = self.ieModelLocation, device_name = "MYRIAD")
-    #         print ("USE NCS2 VPU")
-    #     except:
-    #         model = ie.load_network(network = self.ieModelLocation, device_name = "CPU")
-    #         print ("NCS2 not found, use CPU...")
-        
-    #     return model
     
     def bound_faces(self, detector_type, bytes_data):
         # Get image byte data, detect face and create bounding box, return image byte data.
@@ -232,13 +214,8 @@ class AI_Manager():
     def make_classifier(self, ie = False, model_location = ''):
         self.modelLocation = model_location
         if self.modelLocation != '':
-            if ie:
-                pass
-                # Use intel inference engine
-                # self.classifier = self.create_inference_engine(self.modelLocation)
-            else:
-                # Use regular tf / keras model
-                self.classifier = models.load_model(self.modelLocation)
+            # Use regular tf / keras model
+            self.classifier = Interpreter(model_path = self.modelLocation)
             return True
         else:
             print ('Model location is not set')
@@ -255,7 +232,7 @@ class AI_Manager():
 
     def get_class_objects(self, model):
         '''
-        Get the class objects fro database
+        Get the class objects from database
         Returns:
         1. List of class primary keys
         2. List of class vectors
@@ -367,7 +344,7 @@ class AI_Manager():
         return bytes_data
 
 try:
-    aiManager = AI_Manager(recognition = True, model_location = "vision_AI/model/vgg_model_loaded.h5")
+    aiManager = AI_Manager(recognition = True, model_location = "vision_AI/model/vggface.tflite")
     print ('model created')
 except Exception as e:
     print (f'Error on activating Vision AI: {e}')
