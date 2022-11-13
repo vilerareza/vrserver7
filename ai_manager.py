@@ -343,8 +343,8 @@ class AI_Manager():
 
         return bytes_data
 
-try:
-    aiManager = AI_Manager(recognition = True, model_location = "vision_AI/vggface.tflite")
-    print ('model created')
-except Exception as e:
-    print (f'Error on activating Vision AI: {e}')
+#try:
+aiManager = AI_Manager(recognition = True, model_location = "vision_AI/vggface.tflite")
+print ('model created')
+#except Exception as e:
+#print (f'Error on activating Vision AI: {e}')
