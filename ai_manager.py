@@ -123,7 +123,7 @@ class AI_Manager():
                 # Padding
                 face_resized = np.pad(face_resized,((diff_y//2, diff_y - diff_y//2), (diff_x//2, diff_x-diff_x//2), (0,0)), 'constant')
                 faces.append(face_resized)
-
+                print (f'face dtype: {face_resized.dtype}')
             return bboxes, faces, img
         except Exception as e:
             print (f'extract_faces: {e}')
@@ -147,7 +147,6 @@ class AI_Manager():
             # Padding
             face_resized = np.pad(face_resized,((diff_y//2, diff_y - diff_y//2), (diff_x//2, diff_x-diff_x//2), (0,0)), 'constant')
             # Progress
-            print (f'face dtype: {face_resized.dtype}')
             return face_resized
         return None
 
