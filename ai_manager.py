@@ -193,7 +193,6 @@ class AI_Manager():
                 self.classifier.set_tensor(self.classifier_input['index'], face)
                 self.classifier.invoke()
                 vector = self.classifier.get_tensor(self.classifier_output['index'])
-                print (f'vector: {vector}')
                 face_vectors.append(vector)
             face_vectors = np.array(face_vectors)
             return face_vectors
