@@ -123,7 +123,6 @@ class AI_Manager():
                 # Padding
                 face_resized = np.pad(face_resized,((diff_y//2, diff_y - diff_y//2), (diff_x//2, diff_x-diff_x//2), (0,0)), 'constant')
                 faces.append(face_resized)
-                print (f'face dtype: {face_resized.dtype}')
             return bboxes, faces, img
         except Exception as e:
             print (f'extract_faces: {e}')
@@ -187,7 +186,7 @@ class AI_Manager():
             face_vectors = []
             for face in face_list.copy():
                 face = np.expand_dims(face, axis=0)
-                face = face/255
+                face = (face/255).astype('float32')
                 # Predict vector
                 # vector = self.classifier.predict(face)[0]
                 self.classifier.set_tensor(self.classifier_input['index'], face)
