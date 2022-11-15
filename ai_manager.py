@@ -27,7 +27,6 @@ class AI_Manager():
     modelLocation = '' #"E:/testimages/facetest/vggface/ir/saved_model.xml"
     ieModelProperties = []
     recognitionThreshold = 0.2
-    modelSignature = None
 
     def __init__(self, recognition = False, ie = False, model_location = '', classes_location = ''):
         
@@ -46,7 +45,8 @@ class AI_Manager():
                 # Use regular tf / keras model
                 #self.classifier = models.load_model(self.modelLocation)
                 self.classifier = Interpreter(model_path = self.modelLocation)
-                self.modelSignature = self.classifier.get_signature_runner()
+                self.classifier_output = self.classifier.get_output_details()[0]
+                self.classifier_input = self.classifier.get_input_details()[0]
             else:
                 print ('Model location is not set')
     
@@ -187,7 +187,9 @@ class AI_Manager():
                 face = face/255
                 # Predict vector
                 # vector = self.classifier.predict(face)[0]
-                vector = self.modelSignature(x=face)
+                self.classifier.set_tensor(self.classifier_input['index'], face)
+                self.classifier.invoke()
+                vector = self.classifier.get_tensor(self.classifier_output['index'])
                 print (f'vector: {vector}')
                 face_vectors.append(vector)
             face_vectors = np.array(face_vectors)
