@@ -27,6 +27,7 @@ class AI_Manager():
     modelLocation = '' #"E:/testimages/facetest/vggface/ir/saved_model.xml"
     ieModelProperties = []
     recognitionThreshold = 0.2
+    modelSignature = None
 
     def __init__(self, recognition = False, ie = False, model_location = '', classes_location = ''):
         
@@ -45,6 +46,7 @@ class AI_Manager():
                 # Use regular tf / keras model
                 #self.classifier = models.load_model(self.modelLocation)
                 self.classifier = Interpreter(model_path = self.modelLocation)
+                self.modelSignature = self.classifier.get_signature_runner()
             else:
                 print ('Model location is not set')
     
@@ -184,7 +186,9 @@ class AI_Manager():
                 face = np.expand_dims(face, axis=0)
                 face = face/255
                 # Predict vector
-                vector = self.classifier.predict(face)[0]
+                # vector = self.classifier.predict(face)[0]
+                vector = self.modelSignature(x=face)
+                print (f'vector: {vector}')
                 face_vectors.append(vector)
             face_vectors = np.array(face_vectors)
             return face_vectors
@@ -192,30 +196,10 @@ class AI_Manager():
             print (f'Create face vector:{e}')
             return []
 
-    def create_mean_face_vector(self, face_list):
-        # Create mean face vector numpy array from list of face data
-        if self.classifier:
-            face_vector = []
-            for face in face_list.copy():
-                face = np.expand_dims(face, axis=0)
-                face = face/255
-                #face = np.moveaxis(face, -1, 1)
-                print (f'face shape: {face.shape}')
-                # Predict vector
-                vector = self.classifier.predict(face)[0]
-                face_vector.append(vector)
-            face_vector = np.array(face_vector)
-            face_vector = np.mean(face_vector, axis = 0)
-            print (f'face_vector shape: {face_vector.shape}')
-            return face_vector
-        else:
-            print ('No classifier, mean face vector not created')
-            return []
-
     def make_classifier(self, ie = False, model_location = ''):
         self.modelLocation = model_location
         if self.modelLocation != '':
-            # Use regular tf / keras model
+            # Use tflite model
             self.classifier = Interpreter(model_path = self.modelLocation)
             return True
         else:
