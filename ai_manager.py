@@ -45,6 +45,7 @@ class AI_Manager():
                 # Use regular tf / keras model
                 #self.classifier = models.load_model(self.modelLocation)
                 self.classifier = Interpreter(model_path = self.modelLocation)
+                self.classifier.allocate_tensors()
                 self.classifier_output = self.classifier.get_output_details()[0]
                 self.classifier_input = self.classifier.get_input_details()[0]
             else:
