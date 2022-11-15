@@ -101,7 +101,7 @@ class AI_Manager():
         # Conversion to np array
         try:
             buff = np.asarray(bytearray(bytes_data))
-            img = imdecode(buff, 1)
+            img = imdecode(buff, 1).astype('float32')
             # Detect face and get bounding boxes
             bboxes = self.detect_faces(detector_type, img)
             # Extract faces
