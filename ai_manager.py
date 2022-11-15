@@ -102,7 +102,7 @@ class AI_Manager():
         try:
             buff = np.asarray(bytearray(bytes_data))
             img = imdecode(buff, 1)
-            print (f'img dtype: {img.dtype}')
+            #print (f'img dtype: {img.dtype}')
             #img = img.astype('float32')
             # Detect face and get bounding boxes
             bboxes = self.detect_faces(detector_type, img)
@@ -189,6 +189,7 @@ class AI_Manager():
                 face = face/255
                 # Predict vector
                 # vector = self.classifier.predict(face)[0]
+                print (f'face dtype: {face.dtype}')
                 self.classifier.set_tensor(self.classifier_input['index'], face)
                 self.classifier.invoke()
                 vector = self.classifier.get_tensor(self.classifier_output['index'])
