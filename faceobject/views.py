@@ -9,7 +9,7 @@ class FaceList (generics.ListCreateAPIView):
     queryset = FaceObject.objects.all()
     serializer_class = FaceSerializer
     def post(self, request, *args, **kwargs):
-        print ('post')
+        super().post(request, *args, **kwargs)
 
 class FaceDetail (generics.RetrieveUpdateDestroyAPIView):
     queryset = FaceObject.objects.all()
