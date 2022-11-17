@@ -17,9 +17,14 @@ class FaceList (generics.ListCreateAPIView):
         if exist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            response = self.create(request, *args, **kwargs)
-            with self.aiManager.condition:
-                self.aiManager.get_class_objects()
+            resp = self.create(request, *args, **kwargs)
+            print (resp)
+            try:
+                with self.aiManager.condition:
+                    self.aiManager.get_class_objects()
+            except Exception as e:
+                print (e)
+            return resp
 
 
 class FaceDetail (generics.RetrieveUpdateDestroyAPIView):
