@@ -1,20 +1,16 @@
-from asyncio.format_helpers import extract_stack
 import datetime
 import base64
 import pickle
-
 #from tensorflow.keras import models
 from tflite_runtime.interpreter import Interpreter
 import numpy as np
-#from openvino.inference_engine import IECore
 
 from cv2 import imread, resize, rectangle, imdecode, imencode
 import numpy as np
 
 from faceobject.models import FaceObject
 from logs.models import Log, FrameLog
-
-#aiManager = None
+from threading import Condition, Lock
 
 class AI_Manager():
 
@@ -27,6 +23,7 @@ class AI_Manager():
     modelLocation = '' #"E:/testimages/facetest/vggface/ir/saved_model.xml"
     ieModelProperties = []
     recognitionThreshold = 0.2
+    condition = Condition(lock = Lock())
 
     def __init__(self, recognition = False, ie = False, model_location = '', classes_location = ''):
         
@@ -128,58 +125,6 @@ class AI_Manager():
         except Exception as e:
             print (f'extract_faces: {e}')
             return [], [], []
-
-    def extract_primary_face(self, detector_type, image_path, target_size = (224,224)):
-        # Detection
-        img, box = self.detect_primary_face_from_file(detector_type, image_path)
-        if np.any(box):
-            x1, y1, width, height = box
-            x2, y2 = x1 + width, y1 + height
-            # face data array
-            face = img[y1:y2, x1:x2]
-            # Resizing
-            factor_y = target_size[0] / face.shape[0]
-            factor_x = target_size[1] / face.shape[1]
-            factor = min (factor_x, factor_y)
-            face_resized = resize(face, (int(face.shape[0]* factor), int(face.shape[1]*factor)))
-            diff_y = target_size[0] - face_resized.shape[0]
-            diff_x = target_size[1] - face_resized.shape[1]
-            # Padding
-            face_resized = np.pad(face_resized,((diff_y//2, diff_y - diff_y//2), (diff_x//2, diff_x-diff_x//2), (0,0)), 'constant')
-            # Progress
-            return face_resized
-        return None
-
-    def detect_primary_face_from_file(self, detector_type, image_path):
-        # Check type of detector
-        if detector_type == 1:
-            detector = self.detector1
-        elif detector_type == 2:
-            detector = self.detector2
-
-        img = imread(image_path)
-
-        if detector == self.detector1:
-            # Haarcascade detector perform here
-            img = imread(image_path)
-            bboxes = detector.detectMultiScale(img)
-            if (len(bboxes)>0):
-                # Face detected
-                print ('Detector 1: Face detected')
-                box = bboxes[0]
-                return img, box
-            else:
-                return img, []
-
-        elif detector == self.detector2:
-            # Haarcascade detector perform here
-            detection = detector.detect_faces(img)
-            if (len(detection)>0):
-                print ('Detector 2: Face detected')
-                box = detection[0]['box']
-                return img, box
-            else:
-                return img, []
 
     def create_face_vectors(self, face_list):
         # Create face vectors numpy array from list of face data
@@ -318,7 +263,11 @@ class AI_Manager():
             i = 0
             for i in range (len(faces)):
                 faceVector = self.create_face_vectors([faces[i]])
-                faceKey, faceNearestDist = self.find_vector_key(faceVector, self.classVectors, self.classPrimaryKeys)
+
+                with self.condition:
+                    # lock self.classVectors and self.classPrimaryKeys to prevent being updated at this time
+                    faceKey, faceNearestDist = self.find_vector_key(faceVector, self.classVectors, self.classPrimaryKeys)
+                
                 if faceNearestDist[0] < self.recognitionThreshold:
                     self.log_face(timeStamp, faceKey[0], faces[i], frameLog.id, bbox = bboxes[i])
             
