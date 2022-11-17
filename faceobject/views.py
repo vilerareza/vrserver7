@@ -21,7 +21,7 @@ class FaceList (generics.ListCreateAPIView):
             print (resp)
             try:
                 with self.aiManager.condition:
-                    self.aiManager.get_class_objects()
+                    self.aiManager.get_class_objects(model = FaceObject)
             except Exception as e:
                 print (e)
             return resp
