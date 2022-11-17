@@ -49,8 +49,9 @@ class AI_Manager():
                 print ('Model location is not set')
     
         # Classes
-        self.classPrimaryKeys, self.classVectors = self.get_class_objects(model = FaceObject)
-    
+        #self.classPrimaryKeys, self.classVectors = self.get_class_objects(model = FaceObject)
+        self.get_class_objects(model = FaceObject)
+
     def bound_faces(self, detector_type, bytes_data):
         # Get image byte data, detect face and create bounding box, return image byte data.
         try:
@@ -164,12 +165,28 @@ class AI_Manager():
         except Exception as e:
             return img
 
+    # def get_class_objects(self, model):
+    #     '''
+    #     Get the class objects from database
+    #     Returns:
+    #     1. List of class primary keys
+    #     2. List of class vectors
+    #     '''
+    #     primaryKeys = []
+    #     vectors = []
+    #     try:
+    #         faceObjects = model.objects.all()
+    #         for faceObject in faceObjects:
+    #             primaryKeys.append(faceObject.pk)
+    #             vectors.append(pickle.loads(base64.b64decode(faceObject.faceVector)))
+    #     except Exception as e:
+    #         print (f'get_class_obects: {e}')
+    #     finally:
+    #         return primaryKeys, vectors
+
     def get_class_objects(self, model):
         '''
-        Get the class objects from database
-        Returns:
-        1. List of class primary keys
-        2. List of class vectors
+        Refresh the class objects from database
         '''
         primaryKeys = []
         vectors = []
@@ -178,10 +195,13 @@ class AI_Manager():
             for faceObject in faceObjects:
                 primaryKeys.append(faceObject.pk)
                 vectors.append(pickle.loads(base64.b64decode(faceObject.faceVector)))
+            self.classPrimaryKeys = primaryKeys
+            self.classVectors = vectors
+            return True
+            
         except Exception as e:
-            print (f'get_class_obects: {e}')
-        finally:
-            return primaryKeys, vectors
+            print (f'refresh_class_obects: {e}')
+            return False
 
     def find_distance_to_classes_euc(self, sample_vector, class_vectors):
         # Return list of distance from sample vector to every vectors in db_vectors list
