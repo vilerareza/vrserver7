@@ -59,9 +59,7 @@ class DeviceFrameConsumer(WebsocketConsumer):
         #img_bytes = aiManager.bound_faces(detector_type = 1, bytes_data = bytes_data)
         '''Comment to disable the AI'''
         t1 = time.time()
-        #with self.condition:
         img_bytes = aiManager.recognize(detector_type = 1, bytes_data = bytes_data)
-        self.condition.notify_all()
         t2 = time.time()
         print (f'time = {t2-t1}')
         self.send(bytes_data = b'1')
