@@ -8,8 +8,8 @@ from .models import FaceObject
 class FaceList (generics.ListCreateAPIView):
     queryset = FaceObject.objects.all()
     serializer_class = FaceSerializer
-    def post(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
+    #def post(self, request, *args, **kwargs):
+        #return self.create(request, *args, **kwargs)
 
 class FaceDetail (generics.RetrieveUpdateDestroyAPIView):
     queryset = FaceObject.objects.all()
