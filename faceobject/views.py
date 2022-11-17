@@ -18,7 +18,6 @@ class FaceList (generics.ListCreateAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             resp = self.create(request, *args, **kwargs)
-            print (resp)
             try:
                 with self.aiManager.condition:
                     self.aiManager.get_class_objects(model = FaceObject)
