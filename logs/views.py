@@ -75,6 +75,7 @@ class LogListDateFilter(generics.ListAPIView):
 
 
     def list(self, request, id=None, num=-1, date_gte='', date_lte=''):
-        queryset = self.get_queryset(id, num, date_gte, date_lte)
+        #queryset = self.get_queryset(id, num, date_gte, date_lte)
+        queryset = Log.objects.all()
         serializer = LogSerializer(queryset, many = True)
         return Response(serializer.data)
