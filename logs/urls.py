@@ -7,4 +7,5 @@ urlpatterns = [
     path('faceid/', views.LogListFaceID.as_view()),
     path('faceid/<int:id>/', views.LogListFaceIDFilter.as_view()),
     path('frame/<int:pk>/', views.FrameDetail.as_view()),
+    path('faceid_range/<int:id>/<int:num>/<str:date_gte>/<str:date_lte>/', views.FrameDetail.as_view()),
 ]
