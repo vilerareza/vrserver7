@@ -45,14 +45,14 @@ class LogListRangeFilter(generics.ListAPIView):
                 # Data range between date_gte and date_lte
                 date_lte = datetime.datetime.strptime(date_lte, '%d%m%y%H%M')
                 # Return it, based on the number of data requested
-                if num != -1:
+                if num != 0:
                     return Log.objects.filter(objectID = id, timeStamp__range = [date_gte, date_lte])[:num]
                 else:
                     return Log.objects.filter(objectID = id, timeStamp__range = [date_gte, date_lte])
             else:
                 # Data with date later than date_gte
                 # Return it, based on the number of data requested
-                if num != -1:
+                if num != 0:
                     return Log.objects.filter(objectID = id, timeStamp__gte = date_gte)[:num]
                 else:
                     return Log.objects.filter(objectID = id, timeStamp__gte = date_gte)
@@ -61,7 +61,7 @@ class LogListRangeFilter(generics.ListAPIView):
             # Data with date later than date_gte
             # Return it, based on the number of data requested
             date_gte = datetime.datetime.strptime(date_gte, '%d%m%y%H%M')
-            if num != -1:
+            if num != 0:
                 return Log.objects.filter(objectID = id, timeStamp__lte = date_lte)[:num]
             else:
                 return Log.objects.filter(objectID = id, timeStamp__lte = date_lte)
