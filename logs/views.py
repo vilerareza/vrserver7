@@ -33,7 +33,7 @@ class FrameDetail(generics.RetrieveDestroyAPIView):
     queryset = FrameLog.objects.all()
     serializer_class = LogFrameSerializer
 
-class LogListDateFilter(generics.ListAPIView):
+class LogListRangeFilter(generics.ListAPIView):
     
     def get_queryset(self, id, num, date_gte, date_lte):
         # If the log with requested attribute value does not exist, the following will just return 0
@@ -74,8 +74,8 @@ class LogListDateFilter(generics.ListAPIView):
                 return Log.objects.filter(objectID = id)
 
 
-    def list(self, request, id=None, num=-1, date_gte='', date_lte=''):
-        #queryset = self.get_queryset(id, num, date_gte, date_lte)
-        queryset = Log.objects.all()
+    def list(self, request, id=None, num=-1, date_gte='0', date_lte='0'):
+        queryset = self.get_queryset(id, num, date_gte, date_lte)
+        #queryset = Log.objects.all()
         serializer = LogSerializer(queryset, many = True)
         return Response(serializer.data)
