@@ -68,16 +68,14 @@ class LogListRangeFilter(generics.ListAPIView):
         
         else:
             # All data, no date is specified
-            print (num)
-            print (type(num))
-            if num != -1:
+            if num != 0:
                 return Log.objects.filter(objectID = id)[:num]
             else:
                 print ('all data')
                 return Log.objects.filter(objectID = id)
 
 
-    def list(self, request, id=None, num=-1, date_gte='0', date_lte='0'):
+    def list(self, request, id=None, num=0, date_gte='0', date_lte='0'):
         queryset = self.get_queryset(id, num, date_gte, date_lte)
         #queryset = Log.objects.all()
         serializer = LogSerializer(queryset, many = True)
