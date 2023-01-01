@@ -68,9 +68,12 @@ class LogListRangeFilter(generics.ListAPIView):
         
         else:
             # All data, no date is specified
+            print (num)
+            print (type(num))
             if num != -1:
                 return Log.objects.filter(objectID = id)[:num]
             else:
+                print ('all data')
                 return Log.objects.filter(objectID = id)
 
 
